@@ -102,16 +102,10 @@ namespace ET.Server
 
             Scene root = self.Root();
             
-            if (messageLocationSender.ActorId != default)
-            {
-                messageLocationSender.LastSendOrRecvTime = TimeInfo.Instance.ServerNow();
-                root.GetComponent<MessageSender>().Send(messageLocationSender.ActorId, message);
-                return;
-            }
             
             long instanceId = messageLocationSender.InstanceId;
             
-            using (await root.Root().GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.MessageLocationSender, entityId))
+            using (await root.GetComponent<CoroutineLockComponent>().Wait(CoroutineLockType.MessageLocationSender, entityId))
             {
                 if (messageLocationSender.InstanceId != instanceId)
                 {
@@ -140,11 +134,7 @@ namespace ET.Server
 
             Scene root = self.Root();
             
-            if (messageLocationSender.ActorId != default)
-            {
-                messageLocationSender.LastSendOrRecvTime = TimeInfo.Instance.ServerNow();
-                return await root.GetComponent<MessageSender>().Call(messageLocationSender.ActorId, request);
-            }
+          
             
             long instanceId = messageLocationSender.InstanceId;
             
